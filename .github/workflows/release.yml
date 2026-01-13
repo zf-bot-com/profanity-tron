@@ -35,7 +35,47 @@ jobs:
         with:
           artifacts: "${{ github.workspace }}/dist/windows.zip"
           token: ${{ secrets.GH_TOKEN }}
-          tag: v2.5.0
+          tag: v1.0.0
+          draft: true
+          allowUpdates: true
+          replacesArtifacts: true
+
+  build_for_linux:
+    name: "Build for Linux"
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: "Install Dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ ocl-icd-opencl-dev libcurl4-openssl-dev
+
+      - name: "Build"
+        run: |
+          g++ Dispatcher.cpp Mode.cpp precomp.cpp profanity.cpp SpeedSample.cpp \
+            -I./Curl/include -I./OpenCL/include \
+            -std=c++11 -Wall -mmmx -O2 -mcmodel=large \
+            -s -lOpenCL -lcurl -mcmodel=large \
+            -o profanity.x64
+
+      - name: "Verify Build"
+        run: |
+          ls -lh profanity.x64
+          file profanity.x64
+
+      - name: "Compress"
+        run: |
+          mkdir -p dist
+          tar -czf dist/linux.tar.gz profanity.x64 profanity.txt
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "${{ github.workspace }}/dist/linux.tar.gz"
+          token: ${{ secrets.GH_TOKEN }}
+          tag: v1.0.0
           draft: true
           allowUpdates: true
           replacesArtifacts: true
