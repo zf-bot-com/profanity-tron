@@ -34,7 +34,7 @@ jobs:
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "${{ github.workspace }}/dist/windows.zip"
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag: v1.0.0
           draft: true
           allowUpdates: true
@@ -74,7 +74,7 @@ jobs:
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "${{ github.workspace }}/dist/linux.tar.gz"
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag: v1.0.0
           draft: true
           allowUpdates: true
