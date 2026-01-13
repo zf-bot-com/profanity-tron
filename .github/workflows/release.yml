@@ -79,3 +79,33 @@ jobs:
           draft: true
           allowUpdates: true
           replacesArtifacts: true
+
+  build_for_macos:
+    name: "Build for macOS (Apple Silicon)"
+    runs-on: macos-14
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: "Build"
+        run: make
+
+      - name: "Verify Build"
+        run: |
+          ls -lh profanity.x64
+          file profanity.x64
+
+      - name: "Compress"
+        run: |
+          mkdir -p dist
+          tar -czf dist/macos-arm64.tar.gz profanity.x64 profanity.txt
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "${{ github.workspace }}/dist/macos-arm64.tar.gz"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: v1.0.0
+          draft: true
+          allowUpdates: true
+          replacesArtifacts: true
